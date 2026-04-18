@@ -15,8 +15,11 @@ class ApiClient extends GetConnect {
 
   @override
   void onInit() async {
-    httpClient.baseUrl = "https://www.wanandroid.com/";
-    httpClient.timeout = const Duration(seconds: 30);
+    baseUrl = "https://wanandroid.com/";
+    timeout = const Duration(seconds: 30);
+    findProxy = (url) {
+      return "PROXY 192.168.124.87:9000";
+    };
     // 读取本地存储的Cookie
     cookies = Get.find<GetStorage>().read("Cookie");
     // 添加请求拦截器,设置Cookie
@@ -24,7 +27,7 @@ class ApiClient extends GetConnect {
       if (cookies != null) {
         request.headers['Cookie'] = cookies!;
       } else {
-        if(request.headers.containsKey("Cookie")) {
+        if (request.headers.containsKey("Cookie")) {
           request.headers.remove("Cookie");
         }
       }
@@ -45,25 +48,32 @@ class ApiClient extends GetConnect {
   }
 
   // 请求响应的通用处理封装
-  Future<R> _performRequestX<R, D>(Future<Response> Function() requestCall, D Function(dynamic json)? fromJsonT) async {
+  Future<R> _performRequestX<R, D>(Future<Response> Function() requestCall,
+      D Function(dynamic json)? fromJsonT) async {
     try {
       // 加载对话框
       showLoadingDialog();
       // 执行对应的网络请求
       Response response = await requestCall();
       // 如果没设置fromJsonT或R是动态类型，直接返回响应数据
-      if (fromJsonT == null || R == dynamic || response.body is! Map<String, dynamic>) return response.body;
+      if (fromJsonT == null ||
+          R == dynamic ||
+          response.body is! Map<String, dynamic>) return response.body;
       // 获取响应内容
       Map<String, dynamic>? responseObject = response.body;
       // 响应码为200，响应体不为空执行数据解析逻辑
-      if (response.statusCode == 200 && responseObject != null && responseObject.isNotEmpty) {
+      if (response.statusCode == 200 &&
+          responseObject != null &&
+          responseObject.isNotEmpty) {
         switch (responseObject['errorCode']) {
           // errorCode为 0 代表请求成功
           case 0:
             if (R.toString().contains("DataResponse")) {
-              return (DataResponse<D>.fromJson(responseObject, fromJsonT)..headers = response.headers) as R;
+              return (DataResponse<D>.fromJson(responseObject, fromJsonT)
+                ..headers = response.headers) as R;
             } else if (R.toString().contains("ListResponse")) {
-              return (ListResponse<D>.fromJson(responseObject, fromJsonT)..headers = response.headers) as R;
+              return (ListResponse<D>.fromJson(responseObject, fromJsonT)
+                ..headers = response.headers) as R;
             } else {
               throw ApiException(-1, "未知响应类型：$R");
             }
@@ -76,7 +86,8 @@ class ApiClient extends GetConnect {
               Get.find<AccountVM>().accountInfo.value = null;
               Get.to(const LoginPage());
             }
-            throw ApiException(responseObject['errorCode'], responseObject['errorMsg']);
+            throw ApiException(
+                responseObject['errorCode'], responseObject['errorMsg']);
         }
       } else {
         throw ApiException(-1, "错误响应格式");
@@ -86,15 +97,31 @@ class ApiClient extends GetConnect {
       if (R.toString().contains("DataResponse")) {
         // 对DataResponse<String?>做下特殊处理，不然会有类型转换异常
         if (R.toString() == "DataResponse<String?>") {
-          return DataResponse<String?>(data: null, errorCode: -1, errorMsg: error.message ?? "未知异常", error: error) as R;
+          return DataResponse<String?>(
+              data: null,
+              errorCode: -1,
+              errorMsg: error.message ?? "未知异常",
+              error: error) as R;
         }
-        return DataResponse<D>(data: null, errorCode: -1, errorMsg: error.message ?? "未知异常", error: error) as R;
+        return DataResponse<D>(
+            data: null,
+            errorCode: -1,
+            errorMsg: error.message ?? "未知异常",
+            error: error) as R;
       } else if (R.toString().contains("ListResponse")) {
         // 对ListResponse<String?>做下特殊处理，不然会有类型转换异常
         if (R.toString() == "ListResponse<String?>") {
-          return ListResponse<String?>(data: null, errorCode: -1, errorMsg: error.message ?? "未知异常", error: error) as R;
+          return ListResponse<String?>(
+              data: null,
+              errorCode: -1,
+              errorMsg: error.message ?? "未知异常",
+              error: error) as R;
         }
-        return ListResponse<D>(data: null, errorCode: -1, errorMsg: error.message ?? "未知异常", error: error) as R;
+        return ListResponse<D>(
+            data: null,
+            errorCode: -1,
+            errorMsg: error.message ?? "未知异常",
+            error: error) as R;
       } else {
         // 都没命中抛出异常
         rethrow;
@@ -113,7 +140,9 @@ class ApiClient extends GetConnect {
           Map<String, dynamic>? query,
           D Function(dynamic json)? fromJsonT}) =>
       _performRequestX(
-          () => post(url, body ?? "{}", contentType: contentType, headers: headers, query: query), fromJsonT);
+          () => post(url, body ?? "{}",
+              contentType: contentType, headers: headers, query: query),
+          fromJsonT);
 
   /// 发起Get请求
   Future<R> getX<R, D>(String url,
@@ -121,7 +150,10 @@ class ApiClient extends GetConnect {
           String? contentType,
           Map<String, dynamic>? query,
           D Function(dynamic json)? fromJsonT}) =>
-      _performRequestX(() => get(url, contentType: contentType, headers: headers, query: query), fromJsonT);
+      _performRequestX(
+          () => get(url,
+              contentType: contentType, headers: headers, query: query),
+          fromJsonT);
 
   void updateCookies(String? cookies) {
     this.cookies = cookies;
