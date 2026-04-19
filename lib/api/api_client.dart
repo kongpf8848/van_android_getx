@@ -5,7 +5,7 @@ import 'package:get/get_connect/http/src/request/request.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:van_android_getx/api/exceptions.dart';
 import 'package:van_android_getx/utils/logger_utils.dart';
-import 'package:van_android_getx/generated/json/base/json_convert_content.dart';
+import 'package:van_android_getx/utils/json_convert_utils.dart';
 
 typedef ProgressCallback = void Function(int received, int total);
 typedef CancelDownload = bool Function();
@@ -206,7 +206,6 @@ class ApiClient extends GetConnect {
       // 获取响应内容
       var responseObject = response.body;
       if (response.isOk && responseObject != null) {
-        print("+++++++++++++++++responseData:${responseObject['data']}");
         switch (responseObject['errorCode']) {
           case 0:
             if (responseObject['data'] == null) {
