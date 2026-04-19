@@ -1,0 +1,23 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:van_android_getx/api/van_api.dart';
+import 'package:van_android_getx/utils/toast_utils.dart';
+import 'package:van_android_getx/model/navi_info.dart';
+
+class NaviVM extends GetxController {
+  var naviInfoItems = List<NaviInfo>.empty(growable: true).obs;
+
+  // 拉取导航数据
+  Future<void> fetchNavi() async {
+    var result = await VanApi.navi();
+    naviInfoItems.addAll(result ?? []);
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchNavi();
+    });
+  }
+}
