@@ -41,7 +41,8 @@ class AccountVM extends GetxController {
     final rePassword = registerReUserNameController.text;
     if (username.isNotEmpty && password.isNotEmpty && rePassword.isNotEmpty) {
       if (password == rePassword) {
-        var result = await VanApi.register(AccountRegisterReq(username, password, rePassword));
+        var result = await VanApi.register(
+            AccountRegisterReq(username, password, rePassword));
         parseAccountInfo(result, isLogin: false);
       } else {
         showToast(msg: "两次输入的密码不一致");
@@ -59,30 +60,25 @@ class AccountVM extends GetxController {
   }
 
   // 解析用户信息的通用处理方法
-  void parseAccountInfo(DataResponse<AccountInfo?> result, {bool? isLogin = true}) {
-    if(result.error == null) {
-      // 更新用户状态
-      accountInfo.value = result.data;
-      var cookies = result.headers?['set-cookie'];
-      if (null != cookies) {
-        VanApi.updateCookies(cookies);
-        Get.find<GetStorage>().write("Cookie", cookies);
-      }
-      if (isLogin == true) {
-        loginUserNameController.text = "";
-        loginPasswordController.text = "";
-        showToast(msg: "【${result.data!.nickname}】登录成功");
-        Get.back();
-      } else {
-        showToast(msg: "【${result.data!.nickname}】注册成功");
-        // 注册成功登录页面也关闭
-        Get.back(result: true);
-      }
+  void parseAccountInfo(AccountInfo? result, {bool? isLogin = true}) {
+    // 更新用户状态
+    accountInfo.value = result;
+    var cookies = result?['set-cookie'];
+    if (null != cookies) {
+      VanApi.updateCookies(cookies);
+      Get.find<GetStorage>().write("Cookie", cookies);
+    }
+    if (isLogin == true) {
+      loginUserNameController.text = "";
+      loginPasswordController.text = "";
+      showToast(msg: "【${result!.nickname}】登录成功");
+      Get.back();
     } else {
-      showToast(msg: result.errorMsg);
+      showToast(msg: "【${result!.nickname}】注册成功");
+      // 注册成功登录页面也关闭
+      Get.back(result: true);
     }
   }
-
 
   @override
   void onClose() {

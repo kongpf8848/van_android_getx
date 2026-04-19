@@ -8,6 +8,13 @@ import 'features/main/main_page.dart';
 void main() async {
   await GetStorage.init(); // 初始化GetStorage
   final themeVM = Get.put(ThemeVM());
-  runApp(Obx(
-      () => GetMaterialApp(theme: themeVM.currentTheme.value, initialBinding: MainBindings(), home: const MainPage())));
+  runApp(
+    Obx(
+      () => GetMaterialApp(
+        theme: themeVM.currentTheme.value,
+        initialBinding: MainBindings(),
+        home: const MainPage(),
+      ),
+    ),
+  );
 }

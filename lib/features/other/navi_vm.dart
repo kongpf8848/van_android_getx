@@ -10,11 +10,7 @@ class NaviVM extends GetxController {
   // 拉取导航数据
   Future<void> fetchNavi() async {
     var result = await VanApi.navi();
-    if (result.error == null) {
-      naviInfoItems.addAll(result.data ?? []);
-    } else {
-      showToast(msg: result.errorMsg);
-    }
+    naviInfoItems.addAll(result ?? []);
   }
 
   @override

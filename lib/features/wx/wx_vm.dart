@@ -19,15 +19,11 @@ class WxVM extends GetxController with GetSingleTickerProviderStateMixin {
   // 拉取公众号列表
   Future<void> fetchWXAccounts({bool? isRefresh = false}) async {
     var result = await VanApi.wxAccounts();
-    if (result.error == null) {
-      wxAccounts.addAll(result.data ?? []);
-      tabController = TabController(length: wxAccounts.length, vsync: this);
-      tabController?.addListener(() {
-        if (!tabController!.indexIsChanging) {}
-      });
-    } else {
-      showToast(msg: result.errorMsg);
-    }
+    wxAccounts.addAll(result ?? []);
+    tabController = TabController(length: wxAccounts.length, vsync: this);
+    tabController?.addListener(() {
+      if (!tabController!.indexIsChanging) {}
+    });
   }
 
   @override

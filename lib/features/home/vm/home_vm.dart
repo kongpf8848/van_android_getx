@@ -16,11 +16,7 @@ class HomeVM extends GetxController {
   // 拉取Banner
   Future fetchHomeBanner() async {
     var result = await VanApi.homeBanner();
-    if (result.error == null) {
-      bannerItems.value = result.data ?? [];
-    } else {
-      showToast(msg: result.errorMsg);
-    }
+    bannerItems.value = result ?? [];
   }
 
   // 拉取文章
@@ -32,11 +28,7 @@ class HomeVM extends GetxController {
       currentPage++;
     }
     var result = await VanApi.homeArticleList(currentPage);
-    if (result.error == null) {
-      homeArticleInfoItems.addAll((result.data?.datas ?? []));
-    } else {
-      showToast(msg: result.errorMsg);
-    }
+    homeArticleInfoItems.addAll((result?.datas ?? []));
   }
 
   @override

@@ -10,11 +10,7 @@ class StudySystemVM extends GetxController {
   // 拉取导航数据
   Future<void> fetchStudySystem() async {
     var result = await VanApi.studySystem();
-    if (result.error == null) {
-      studySystemItems.addAll(result.data ?? []);
-    } else {
-      showToast(msg: result.errorMsg);
-    }
+    studySystemItems.addAll(result ?? []);
   }
 
   @override

@@ -3,7 +3,6 @@ import 'dart:convert';
 
 part 'account_info.g.dart';
 
-
 @JsonSerializable()
 class AccountInfo {
   @JsonKey(name: "admin")
@@ -49,7 +48,10 @@ class AccountInfo {
     this.username,
   });
 
-  factory AccountInfo.fromJson(Map<String, dynamic> json) => _$AccountInfoFromJson(json);
+  factory AccountInfo.fromJson(Map<String, dynamic> json) =>
+      _$AccountInfoFromJson(json);
 
   Map<String, dynamic> toJson() => _$AccountInfoToJson(this);
+
+  operator [](String other) {}
 }

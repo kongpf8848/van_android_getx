@@ -21,11 +21,7 @@ class WxArticleListVM extends GetxController {
       currentPage++;
     }
     var result = await VanApi.wxArticleList(wxId, currentPage);
-    if (result.error == null) {
-      articleInfoItems.addAll((result.data?.datas ?? []));
-    } else {
-      showToast(msg: result.errorMsg);
-    }
+    articleInfoItems.addAll((result?.datas ?? []));
   }
 
   @override
